@@ -2,19 +2,29 @@ import threading
 import time
 import random
 
-# 1. Создаем Склад, где лежат товары
 class Warehouse:
+    """
+    Класс, представляющий общий ресурс (Склад) для хранения товаров.
+    Использует threading.Lock для безопасной работы в многопоточной среде.
+    """
     def __init__(self):
-        self.storage = []           # Тут хранятся товары
-        self.lock = threading.Lock() # Замок, чтобы потоки не толкались
+        self.storage = []       
+
+# Список для хранения товаров
+    
+        self.lock = threading.Lock()  
+    
+# Замок для синхронизации потоков
 
     def add_product(self, product):
-        with self.lock: # Закрываем дверь на замок, пока кладем товар
+        """Добавляет товар на склад."""
+        with self.lock:
             self.storage.append(product)
             print(f"[ЗАВОД] Сделал: {product}. На складе: {len(self.storage)}")
 
     def remove_product(self):
-        with self.lock: # Закрываем дверь на замок, пока забираем товар
+        """Забирает товар со склада для продажи."""
+        with self.lock:
             if len(self.storage) > 0:
                 product = self.storage.pop(0)
                 print(f"[МАГАЗИН] Продал: {product}. Осталось: {len(self.storage)}")
@@ -23,33 +33,38 @@ class Warehouse:
                 print("[МАГАЗИН] Товара нет, ждем завод...")
                 return None
 
-# 2. Что делает Завод (работает сам по себе)
 def factory_worker(warehouse):
+    """Функция потока-производителя (Завод)."""
     products = ["Смартфон", "Ноутбук", "Наушники"]
-    for _ in range(5): # Сделает 5 товаров
+    for _ in range(5):
         product = random.choice(products)
         warehouse.add_product(product)
-        time.sleep(1) # Отдыхает 1 секунду
+        time.sleep(1)
 
-# 3. What делает Магазин (работает сам по себе)
 def shop_worker(warehouse):
-    for _ in range(5): # Попробует продать 5 раз
+    """Функция-потребитель (Магазин)."""
+    for _ in range(5):
         warehouse.remove_product()
-        time.sleep(1.5) # Ждет покупателя 1.5 секунды
+        time.sleep(1.5)
 
-# 4. Главный запуск игры
 if __name__ == "__main__":
-    shared_warehouse = Warehouse() # Создаем один склад для всех
+    
+# Инициализация общего ресурса
+    
+    shared_warehouse = Warehouse()
 
-    # Включаем параллельные потоки (Завод и Магазин работают одновременно)
+# Создание параллельных потоков
+
     potok_zavoda = threading.Thread(target=factory_worker, args=(shared_warehouse,))
     potok_magazina = threading.Thread(target=shop_worker, args=(shared_warehouse,))
 
-    # Запускаем их!
+# Запуск потоков
+
     potok_zavoda.start()
     potok_magazina.start()
 
-    # Ждем, пока они закончат
+# Ожидание завершения работы потоков
+
     potok_zavoda.join()
     potok_magazina.join()
 
