@@ -1,71 +1,28 @@
 import threading
-import time
-import random
-
-class Warehouse:
-    """
-    Класс, представляющий общий ресурс (Склад) для хранения товаров.
-    Использует threading.Lock для безопасной работы в многопоточной среде.
-    """
-    def __init__(self):
-        self.storage = []       
-
-# Список для хранения товаров
-    
-        self.lock = threading.Lock()  
-    
-# Замок для синхронизации потоков
-
-    def add_product(self, product):
-        """Добавляет товар на склад."""
-        with self.lock:
-            self.storage.append(product)
-            print(f"[ЗАВОД] Сделал: {product}. На складе: {len(self.storage)}")
-
-    def remove_product(self):
-        """Забирает товар со склада для продажи."""
-        with self.lock:
-            if len(self.storage) > 0:
-                product = self.storage.pop(0)
-                print(f"[МАГАЗИН] Продал: {product}. Осталось: {len(self.storage)}")
-                return product
-            else:
-                print("[МАГАЗИН] Товара нет, ждем завод...")
-                return None
-
-def factory_worker(warehouse):
-    """Функция потока-производителя (Завод)."""
-    products = ["Смартфон", "Ноутбук", "Наушники"]
-    for _ in range(5):
-        product = random.choice(products)
-        warehouse.add_product(product)
-        time.sleep(1)
-
-def shop_worker(warehouse):
-    """Функция-потребитель (Магазин)."""
-    for _ in range(5):
-        warehouse.remove_product()
-        time.sleep(1.5)
+import utils
+from ecosystem import Ecosystem
+from organism import Population
 
 if __name__ == "__main__":
+    print(f"--- Запуск консольного симулятора жизни ---")
+    print(f"Репозиторий проекта: {utils.GITHUB_REPOSITORY_URL}\n")
     
-# Инициализация общего ресурса
-    
-    shared_warehouse = Warehouse()
+    # 1. Создаем экосистему с начальным запасом еды
+    forest_ecosystem = Ecosystem(initial_food=40)
 
-# Создание параллельных потоков
+    # 2. Создаем популяцию из 2-х организмов (Травоядных)
+    deer_population = Population(species_name="Олень", count=2)
 
-    potok_zavoda = threading.Thread(target=factory_worker, args=(shared_warehouse,))
-    potok_magazina = threading.Thread(target=shop_worker, args=(shared_warehouse,))
+    # 3. Настраиваем потоки: один для жизнедеятельности животных, второй для роста ресурсов
+    population_thread = threading.Thread(target=deer_population.simulate_life, args=(forest_ecosystem,))
+    nature_thread = threading.Thread(target=forest_ecosystem.regenerate)
 
-# Запуск потоков
+    # 4. Запускаем параллельные процессы в экосистеме
+    population_thread.start()
+    nature_thread.start()
 
-    potok_zavoda.start()
-    potok_magazina.start()
+    # 5. Ожидаем завершения симуляции
+    population_thread.join()
+    nature_thread.join()
 
-# Ожидание завершения работы потоков
-
-    potok_zavoda.join()
-    potok_magazina.join()
-
-    print("Симуляция окончена!")
+    print("\n--- Симуляция экосистемы успешно завершена! ---")
