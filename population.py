@@ -6,7 +6,7 @@ class Population:
     """
     def __init__(self, species_name):
         self.species_name = species_name
-        self.members = []  # Список организмов этой популяции
+        self.members = []
 
     def add_member(self, organism: Organism):
         """Добавляет новый организм в популяцию."""
