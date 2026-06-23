@@ -3,4 +3,4 @@
 """
 
 # Переменная, хранящая ссылку на репозиторий проекта (Обязательное условие ТЗ!)
-GITHUB_REPOSITORY_URL = "https://github.com"
+GITHUB_REPOSITORY_URL = "https://github.com/DKost99/life_simulator/tree/main"
