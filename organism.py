@@ -1,6 +1,6 @@
 class Organism:
     """
-    Класс, представляющий живой организм в симуляторе.
+    Класс, представляющий отдельный живой организм в симуляторе.
     """
     def __init__(self, name, health):
         self.name = name
@@ -13,4 +13,4 @@ class Organism:
     def eat(self, food_amount):
         """Логика питания организма, повышающая его здоровье."""
         self.health += food_amount
-        print(f" {self.name} поел и восстановил здоровье. Текущее здоровье: {self.health}")
+        print(f"{self.name} поел и восстановил здоровье. Текущее здоровье: {self.health}")
