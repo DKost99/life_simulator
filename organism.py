@@ -11,6 +11,6 @@ class Organism:
         return self.health > 0
 
     def eat(self, food_amount):
-        """Логика питания организма, повышающая его здоровье."""
+        """Логика питания организма."""
         self.health += food_amount
         print(f"{self.name} поел и восстановил здоровье. Текущее здоровье: {self.health}")
