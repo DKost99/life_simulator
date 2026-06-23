@@ -18,4 +18,4 @@ class Ecosystem:
             if org.is_alive():
                 org.eat(10)
             else:
-                print(f" {org.name} мёртв.")
+                print(f"{org.name} мёртв.")
